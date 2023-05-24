@@ -1,0 +1,149 @@
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+    
+    public void syntax_error(Symbol s){
+        this.s = s;
+    }
+
+    public Symbol getS(){
+        return this.s;
+}
+:};
+
+terminal Int, If, Else, For, Return, Case, Main, Class, Switch, Console, Function, Const, Get,
+         Set, New, Continue, In, Try, Document, Do, While, Delete, This, Default, With, String, Char,
+         Byte, Short, Double, Float, Long, Boolean, Final, True, False, Null, Public, Protected,
+         Private, SYstem, Println, Print, Out, Void, Import, SCanner, Package, Static, Super,
+         InstanceOf, NextInt, NextDouble, NextFloat, NextByte, NextLong, Next, Break, Igual, Suma, Resta, 
+         Multiplicacion, Division, Incremento, Decremento,
+         Residuo, Menor_que, Mayor_que, Igual_que, Distinto_que, Menor_o_igual, Mayor_o_igual, Suma_combinada,
+         Resta_combinada, Producto_combinado, Division_combinada, Residuo_combinado, Negacion,
+         NOT, OR, AND, Parentesis_a, Parentesis_c, Llave_a, Llave_c, Corchete_a, Corchete_c, P_coma,
+         Dos_puntos, Comillas, Comilla, Punto, Coma, Identificador, Numero, TS, ERROR;
+
+non terminal Raiz, ImportarLibrerias, LlamarLibreria, LlamandoScanner, DeclararClase, TipoAcceso, MetodoMain, BloqueCodigo,
+                   DeclarandoEscaner, ImprimirPantalla, TipoImpresion, AgregandoVariables, DeclararVariable, TipoDato, 
+                   DeclararOInicializar, AsignandoValor, Inicializar, OperadorAsignacion, Valores, ExpresionAritmetica, ValorDecimal, 
+                   ValorArreglo, InicializarPosicionArreglo, OperadoresAritmeticos, ValorBoolean, EntradaTeclado, TipoEntrada,  
+                   ControlesDeFlujo, BloqueIf, ReglaIf, Condiciones, OperadoresRelacionales, OperadoresLogicos, BloqueElse;
+
+start with Raiz;
+
+Raiz ::= ImportarLibrerias DeclararClase | DeclararClase ;
+      
+
+ImportarLibrerias ::= Import LlamarLibreria | LlamandoScanner | LlamandoScanner ImportarLibrerias | Import LlamarLibreria ImportarLibrerias ;
+                   
+
+LlamarLibreria ::= Identificador P_coma | Identificador Punto LlamarLibreria;
+
+/*Importando solo el Scanner---conflicto de reservada*/
+LlamandoScanner ::= Import Identificador Punto Identificador Punto SCanner P_coma;
+                
+
+DeclararClase ::= TipoAcceso Class Identificador Llave_a Llave_c |
+                  TipoAcceso Class Identificador Llave_a MetodoMain Llave_c ;
+               
+
+TipoAcceso ::= Public | Protected | Private ;
+            
+
+MetodoMain ::= Public Static Void Main Parentesis_a String Identificador Corchete_a Corchete_c Parentesis_c Llave_a Llave_c | 
+               Public Static Void Main Parentesis_a String Corchete_a Corchete_c Identificador  Parentesis_c Llave_a Llave_c | 
+               Public Static Void Main Parentesis_a String Identificador Corchete_a Corchete_c Parentesis_c Llave_a BloqueCodigo Llave_c |
+               Public Static Void Main Parentesis_a String Corchete_a Corchete_c Identificador Parentesis_c Llave_a BloqueCodigo Llave_c;
+
+/*Bloque de codigo*/
+
+BloqueCodigo ::= DeclarandoEscaner | DeclarandoEscaner BloqueCodigo | ImprimirPantalla | 
+                 ImprimirPantalla BloqueCodigo | AgregandoVariables | AgregandoVariables BloqueCodigo |
+                 Inicializar | Inicializar BloqueCodigo | InicializarPosicionArreglo | InicializarPosicionArreglo BloqueCodigo |
+                 ControlesDeFlujo | ControlesDeFlujo BloqueCodigo;
+                 
+
+/*Declarar Scanner*/
+DeclarandoEscaner ::= SCanner Identificador Igual New SCanner Parentesis_a SYstem Punto In Parentesis_c P_coma ;
+
+ImprimirPantalla ::= SYstem Punto Out Punto TipoImpresion Parentesis_a Parentesis_c P_coma |
+                     SYstem Punto Out Punto TipoImpresion Parentesis_a ExpresionAritmetica Parentesis_c  P_coma ;
+
+TipoImpresion ::= Println | Print;
+
+/*Proceso para inicializar o declarar variables*/
+AgregandoVariables ::= DeclararVariable P_coma ;
+
+DeclararVariable ::= TipoDato DeclararOInicializar;
+
+TipoDato ::= Int | String | Char | Byte | Short | Double | Float | Long | Boolean ;
+
+DeclararOInicializar ::= Identificador | Identificador Coma DeclararOInicializar |
+                         AsignandoValor | AsignandoValor Coma DeclararOInicializar ;
+
+AsignandoValor ::= Identificador OperadorAsignacion Valores | Identificador Incremento | Identificador Decremento;
+
+Inicializar ::= AsignandoValor P_coma;
+
+OperadorAsignacion ::= Igual | Suma_combinada | Resta_combinada | Producto_combinado | Division_combinada | Residuo_combinado ;
+
+Valores ::= ExpresionAritmetica | ValorBoolean | EntradaTeclado | Null;
+
+/*Conflicto, en vez de aceptar esto */
+/*ExpresionAritmetica OperadoresAritmeticos ExpresionAritmetica*/
+/*solo acepta esto*/
+/*OperadoresAritmeticos ExpresionAritmetica*/
+
+ExpresionAritmetica ::= Numero | ValorDecimal | Identificador | TS | Parentesis_a ExpresionAritmetica Parentesis_c |
+                        ExpresionAritmetica OperadoresAritmeticos Numero |
+                        ExpresionAritmetica OperadoresAritmeticos Identificador |
+                        ExpresionAritmetica OperadoresAritmeticos TS |
+                        ExpresionAritmetica OperadoresAritmeticos ValorArreglo |
+                        ExpresionAritmetica OperadoresAritmeticos ValorDecimal ; 
+                         
+ValorDecimal ::= Numero Punto Numero;
+
+ValorArreglo ::= Identificador Corchete_a Numero Corchete_c | Identificador Corchete_a Identificador Corchete_c ;
+
+InicializarPosicionArreglo ::= ValorArreglo Igual Valores P_coma ;                           
+
+OperadoresAritmeticos ::= Suma | Resta | Multiplicacion | Division;
+
+ValorBoolean ::= True | False;
+
+EntradaTeclado ::= Identificador Punto TipoEntrada Parentesis_a Parentesis_c;
+
+TipoEntrada ::= NextInt | NextDouble | NextFloat | NextByte | NextLong | Next ;
+
+/*------------*/
+ControlesDeFlujo ::= BloqueIf  ;
+
+BloqueIf ::=  ReglaIf Llave_a Llave_c |
+              ReglaIf Llave_a BloqueCodigo Llave_c |
+              ReglaIf Llave_a Llave_c BloqueElse |
+              ReglaIf Llave_a BloqueCodigo Llave_c BloqueElse;
+
+ReglaIf ::= If Parentesis_a Condiciones Parentesis_c ;
+
+Condiciones ::= ExpresionAritmetica  OperadoresRelacionales  ExpresionAritmetica | 
+                Parentesis_a ExpresionAritmetica  OperadoresRelacionales  ExpresionAritmetica Parentesis_c |
+                ValorBoolean | Negacion ExpresionAritmetica | 
+                Negacion  Parentesis_a  ExpresionAritmetica  OperadoresRelacionales  ExpresionAritmetica Parentesis_c |
+                Condiciones OperadoresLogicos  ExpresionAritmetica  OperadoresRelacionales  ExpresionAritmetica |
+                Condiciones OperadoresLogicos  ValorBoolean | 
+                Condiciones OperadoresLogicos  Negacion ExpresionAritmetica |
+                Condiciones OperadoresLogicos Parentesis_a ExpresionAritmetica  OperadoresRelacionales  ExpresionAritmetica Parentesis_c;
+
+OperadoresRelacionales ::= Menor_que | Mayor_que | Igual_que |
+                           Distinto_que | Menor_o_igual | Mayor_o_igual ;
+
+OperadoresLogicos ::= AND | OR | NOT ;
+
+BloqueElse ::= Else Llave_a Llave_c | 
+               Else Llave_a BloqueCodigo Llave_c |
+               Else ReglaIf Llave_a Llave_c |
+               Else ReglaIf Llave_a BloqueCodigo Llave_c |
+               Else ReglaIf Llave_a Llave_c BloqueElse |
+               Else ReglaIf Llave_a BloqueCodigo Llave_c BloqueElse ;

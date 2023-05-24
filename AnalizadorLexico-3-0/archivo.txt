@@ -1,0 +1,14 @@
+public class ClaseSola2 {
+    
+    public static void main(String[] args) {
+        
+        if ( !(5==5) ) {
+            
+        }
+        if ( (5>5) || (5<4) ) {
+            
+        }
+        
+    }
+    
+}
